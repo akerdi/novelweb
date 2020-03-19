@@ -5,6 +5,7 @@ import (
 	"novelweb/middlewares"
 	"novelweb/config"
 	"novelweb/routes"
+	"novelweb/db"
 	
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,8 @@ import (
 
 func Init() *gin.Engine {
 	initConfig()
+	// 先打开数据库
+	db.OpenDB()
 	
 	g := gin.New()
 	initMiddleware(g)

@@ -2,15 +2,16 @@ package routes
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"novelweb/middlewares"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Route struct {
-	Path string
-	Method string
+	Path    string
+	Method  string
 	Middles []gin.HandlerFunc
 }
 
@@ -32,6 +33,7 @@ func applyRoutes(g *gin.Engine, routes []Route) {
 
 func InitRoute(g *gin.Engine) {
 	//applyRoutes(g, CommonRoutes)
+	applyRoutes(g, novelRoutes)
 	g.NoRoute(middlewares.ReturnPublic())
 	g.Use(middlewares.NotRouteResponse())
 }
