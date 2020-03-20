@@ -18,7 +18,7 @@ func SearchNovel() gin.HandlerFunc {
 
 		dbFD := db.GetDB()
 		newNovel := db.NovelNet{
-			IsParse:  false,
+			IsParse:  1,
 			RealURL:  "www.baidu.com",
 			URLTitle: "baidu",
 		}
