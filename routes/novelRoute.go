@@ -14,4 +14,11 @@ var novelRoutes = []Route{
 			service.SearchNovel(),
 		},
 	},
+	{
+		Path: "/api/novel/chapter/:md5",
+		Method: "POST",
+		Middles:	[]gin.HandlerFunc{
+			service.SearchChapter(),
+		},
+	},
 }
