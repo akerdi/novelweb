@@ -7,3 +7,10 @@ type NovelNet struct {
 	Title string `gorm:"type:varchar(50);not null;" json:"title"` // 网站抬头
 	MD5 string `gorm:"type:varchar(50); not null;unique_index;" json:"md5"` // 使用RealURL+URLTitle 的编码
 }
+
+type NovelChapter struct {
+	Id int `gorm:"primary_key" json:"id"`
+	MD5 string `gorm:"type:varchar(50);not null;unique_index;json:"md5"`
+	Name string `gorm:"type.varchar(30);" json:"name"`
+	Chapters string `gorm:"type.text";`
+}

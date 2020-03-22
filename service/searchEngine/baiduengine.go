@@ -35,16 +35,14 @@ func (engine *BaiduSearchEngine) EngineRun(novelName, page string, group *sync.W
 	searchKey := url.QueryEscape(fmt.Sprintf(engine.searchRule, novelName))
 	requestUrl := fmt.Sprintf(engine.domain, searchKey)
 	pageIndex, err := strconv.Atoi(page)
+	unsignPageIndex := uint64(pageIndex)
 	if err != nil {
 		fmt.Println("searchKey: ", searchKey, " requestUrl: ", requestUrl, " pageIndex: ", pageIndex)
 		log.Fatal("~~~~~`", err)
 	}
-	pageIndex -= 1
-	if pageIndex < 0 {
-		pageIndex = 0
-	}
-	pageIndex = pageIndex * 15
-	requestUrl = fmt.Sprintf("%s&pn=%d", requestUrl, pageIndex)
+	unsignPageIndex -= 1
+	unsignPageIndex = unsignPageIndex * 15
+	requestUrl = fmt.Sprintf("%s&pn=%d", requestUrl, unsignPageIndex)
 	c := generate.NewFetcher()
 	c.OnHTML(engine.parseRule, func(element *colly.HTMLElement) {
 		group.Add(1)

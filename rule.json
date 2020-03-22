@@ -38,8 +38,13 @@
     },
     "www.lread.net": {
       "link_prefix": "0",
-      "chpater_selector": "#list a",
+      "chapter_selector": "#list a",
       "content_selector": "#booktext"
+    },
+    "www.bxwx666.org": {
+      "link_prefix": "0",
+      "chapter_selector": "#list_dl a",
+      "content_selector": "#zjneirong"
     }
   },
   "ignores": {
@@ -53,7 +58,6 @@
     "www.soduso.com": 1,
     "pages.book.qq.com": 1,
     "book.km.com": 1,
-    "www.lread.net": 1,
     "www.0dsw.com": 1,
     "www.5200xsb.com": 1,
     "www.80txt.com": 1,

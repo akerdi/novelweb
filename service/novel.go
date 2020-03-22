@@ -17,7 +17,7 @@ import (
 func SearchNovel() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		keyWord := c.Param("keyword")
-		var page string = "1"
+		var page = "1"
 		page = c.Param("page")
 		dbFD := db.GetDB()
 		var novelNets []schema.NovelNet
@@ -36,7 +36,7 @@ func SearchNovel() gin.HandlerFunc {
 		_, results := searchByNet(keyWord, page)
 		for _, result := range results {
 			newNovel := schema.NovelNet{
-				IsParse: 0,
+				IsParse: result.IsParse,
 				URL:     result.Href,
 				Title:   result.Title,
 			}
@@ -56,11 +56,29 @@ func SearchNovel() gin.HandlerFunc {
 
 func SearchChapter() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.String(http.StatusOK, "hahah"+c.Param("md5"))
+		md5 := c.Param("md5")
+		var novelNet schema.NovelNet
+		dbFD := db.GetDB()
+		dbc := dbFD.Where("md5 = ?", md5).First(&novelNet)
+		if dbc.Error != nil {
+			fmt.Println("@@@@@@@@2", dbc.Error)
+			c.JSON(http.StatusServiceUnavailable, dbc.Error)
+			return
+		}
+		//if (schema.NovelNet{}) == novelNet {
+		//	log.Println("@@@@@@@#####$$$$$$", novelNet)
+		//	c.JSON(http.StatusNoContent, "失败")
+		//	return
+		//}
+
+		fmt.Println("2222222", novelNet)
+		c.JSON(http.StatusOK, novelNet)
 	}
 }
 
 // helper
+
+
 
 func searchByNet(keyWord, page string) (error, []model.SearchResult) {
 	// 使用网络的
