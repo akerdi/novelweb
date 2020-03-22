@@ -2,19 +2,22 @@ package searchEngine
 
 import (
 	"fmt"
-	"github.com/gocolly/colly"
+	"log"
 	"net/url"
 	"novelweb/config"
 	"novelweb/generate"
 	"novelweb/model"
+	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/gocolly/colly"
 )
 
 type BaiduSearchEngine struct {
-	parseRule string
-	searchRule string
-	domain string
+	parseRule       string
+	searchRule      string
+	domain          string
 	parseResultFunc func(searResult *model.SearchResult)
 }
 
@@ -27,16 +30,28 @@ func NewBaiduSearchEngine(parseResultFunc func(result *model.SearchResult)) *Bai
 	}
 }
 
-func (engine *BaiduSearchEngine) EngineRun(novelName string, group *sync.WaitGroup) {
-	defer  group.Done()
+func (engine *BaiduSearchEngine) EngineRun(novelName, page string, group *sync.WaitGroup) {
+	defer group.Done()
 	searchKey := url.QueryEscape(fmt.Sprintf(engine.searchRule, novelName))
 	requestUrl := fmt.Sprintf(engine.domain, searchKey)
+	pageIndex, err := strconv.Atoi(page)
+	if err != nil {
+		fmt.Println("searchKey: ", searchKey, " requestUrl: ", requestUrl, " pageIndex: ", pageIndex)
+		log.Fatal("~~~~~`", err)
+	}
+	pageIndex -= 1
+	if pageIndex < 0 {
+		pageIndex = 0
+	}
+	pageIndex = pageIndex * 15
+	requestUrl = fmt.Sprintf("%s&pn=%d", requestUrl, pageIndex)
 	c := generate.NewFetcher()
 	c.OnHTML(engine.parseRule, func(element *colly.HTMLElement) {
 		group.Add(1)
 		go engine.extractData(element, group)
 	})
-	err := c.Visit(requestUrl)
+	fmt.Println("######### requestUrl: ", requestUrl)
+	err = c.Visit(requestUrl)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -67,7 +82,7 @@ func (engine *BaiduSearchEngine) extractData(element *colly.HTMLElement, group *
 			Href:    realURL,
 			Title:   title,
 			IsParse: generate.Ternary(isParse, int64(1), int64(0)).(int64),
-			Host:   host,
+			Host:    host,
 		}
 		engine.parseResultFunc(result)
 	})
@@ -83,5 +98,5 @@ func (engine *BaiduSearchEngine) checkIsParse(host string) bool {
 			return true
 		}
 	}
-	return  false
+	return false
 }

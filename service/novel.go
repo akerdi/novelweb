@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"novelweb/db"
@@ -13,17 +12,21 @@ import (
 	_ "novelweb/service/searchEngine"
 	"sync"
 	_ "sync"
+
+	"github.com/gin-gonic/gin"
 )
 
 func SearchNovel() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		keyWord := c.Param("keyword")
+		var page string = "1"
+		page = c.Param("page")
 		dbFD := db.GetDB()
 		var novelNets []schema.NovelNet
 		likeStr := fmt.Sprintf("%%%s%%", keyWord)
-		dbc := dbFD.Where("title LIKE ?", likeStr).Limit(10).Find(&novelNets)
+		dbc := dbFD.Where("title LIKE ?", likeStr).Limit(15).Find(&novelNets)
 		if dbc.Error != nil {
-			fmt.Println("database meet error!!!1")
+			fmt.Println("database meet error!!!1", dbc.Error)
 			c.JSON(http.StatusServiceUnavailable, nil)
 			return
 		}
@@ -32,12 +35,12 @@ func SearchNovel() gin.HandlerFunc {
 			c.JSON(http.StatusOK, novelNets)
 			return
 		}
-		_, results := searchByNet(keyWord)
+		_, results := searchByNet(keyWord, page)
 		for _, result := range results {
 			newNovel := schema.NovelNet{
-				IsParse:  0,
-				URL:  result.Href,
-				Title: result.Title,
+				IsParse: 0,
+				URL:     result.Href,
+				Title:   result.Title,
 			}
 			hashStr := fmt.Sprintf("%s%s", newNovel.URL, newNovel.Title)
 			newNovel.MD5 = generate.GetMD5Hash(hashStr)
@@ -61,16 +64,16 @@ func SearchChapter() gin.HandlerFunc {
 
 // helper
 
-func searchByNet(keyWord string) (error, []model.SearchResult) {
+func searchByNet(keyWord, page string) (error, []model.SearchResult) {
 	// 使用网络的
 	group := sync.WaitGroup{}
 	//results := make([]*model.SearchResult, 0)
 	results := make([]model.SearchResult, 0)
 	group.Add(1)
 	searchEngine := searchEngine.NewBaiduSearchEngine(func(result *model.SearchResult) {
-		results	= append(results, *result)
+		results = append(results, *result)
 	})
-	go searchEngine.EngineRun(keyWord, &group)
+	go searchEngine.EngineRun(keyWord, page, &group)
 	group.Wait()
 	return nil, results
 }

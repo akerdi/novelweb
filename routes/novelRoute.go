@@ -8,16 +8,16 @@ import (
 
 var novelRoutes = []Route{
 	{
-		Path:   "/api/novel/search/:keyword",
+		Path:   "/api/novel/search/:keyword/:page",
 		Method: "POST",
 		Middles: []gin.HandlerFunc{
 			service.SearchNovel(),
 		},
 	},
 	{
-		Path: "/api/novel/chapter/:md5",
+		Path:   "/api/novel/chapter/:md5",
 		Method: "POST",
-		Middles:	[]gin.HandlerFunc{
+		Middles: []gin.HandlerFunc{
 			service.SearchChapter(),
 		},
 	},
