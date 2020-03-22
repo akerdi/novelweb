@@ -25,6 +25,11 @@ func OpenDB() {
 			panic(err)
 		}
 	}
+	if !db.HasTable(&schema.NovelChapter{}) {
+		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&schema.NovelChapter{}).Error; err != nil {
+			panic(err)
+		}
+	}
 }
 func CloseDB() {
 	db.Close()

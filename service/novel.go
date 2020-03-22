@@ -1,9 +1,13 @@
 package service
 
 import (
+	"errors"
 	"fmt"
+	"github.com/gocolly/colly"
 	"log"
 	"net/http"
+	"net/url"
+	"novelweb/config"
 	"novelweb/db"
 	"novelweb/db/schema"
 	"novelweb/generate"
@@ -36,7 +40,7 @@ func SearchNovel() gin.HandlerFunc {
 		_, results := searchByNet(keyWord, page)
 		for _, result := range results {
 			newNovel := schema.NovelNet{
-				IsParse: result.IsParse,
+				IsParse: uint64(result.IsParse),
 				URL:     result.Href,
 				Title:   result.Title,
 			}
@@ -70,15 +74,68 @@ func SearchChapter() gin.HandlerFunc {
 		//	c.JSON(http.StatusNoContent, "失败")
 		//	return
 		//}
-
 		fmt.Println("2222222", novelNet)
-		c.JSON(http.StatusOK, novelNet)
+		novelChapter, err := searchChapter(&novelNet)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "")
+			return
+		}
+		dbc = dbFD.Create(novelChapter)
+		if dbc.Error != nil {
+			log.Println("-------", dbc.Error)
+			c.JSON(http.StatusServiceUnavailable, "")
+			return
+		}
+		
+		//fmt.Printf("2222222333333%v\n", novelChapter)
+		c.JSON(http.StatusOK, novelChapter)
 	}
 }
 
 // helper
 
-
+func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
+	var novelChapter schema.NovelChapter
+	c := generate.NewFetcher()
+	requestURI, err := url.ParseRequestURI(novelNet.URL)
+	if err != nil {
+		return &novelChapter, err
+	}
+	host  := requestURI.Host
+	chapterSelector, ok := config.RuleConfig.Rules[host]["chapter_selector"].(string)
+	if !ok {
+		return &novelChapter, errors.New(fmt.Sprintf("%s in RuleConfig.Rules chapter_selector is not ok", host))
+	}
+	chapterLinkPrefix, ok := config.RuleConfig.Rules[host]["link_prefix"].(string)
+	if !ok {
+		return &novelChapter, errors.New(fmt.Sprintf("%s in RuleConfig.Rules link_prefix is not ok", host))
+	}
+	var chapterElements []schema.NovelChapterElement
+	c.OnHTML(chapterSelector, func(element *colly.HTMLElement) {
+		html := element.Attr("href")
+		if html == "" {
+			fmt.Println("无效dom")
+			return
+		}
+		chapterElement := schema.NovelChapterElement{
+			Name: element.Text,
+			Href: html,
+		}
+		chapterElements = append(chapterElements, chapterElement)
+	})
+	
+	err = c.Visit(novelNet.URL)
+	if err != nil {
+		log.Println("~~~~~~~~~~", err)
+		return nil, err
+	}
+	novelChapter.Chapters = chapterElements
+	novelChapter.MD5 = novelNet.MD5
+	novelChapter.LinkPrefix = chapterLinkPrefix
+	novelChapter.OriginURL = novelNet.URL
+	novelChapter.Domain = fmt.Sprintf("%s://%s", requestURI.Scheme, requestURI.Host)
+	return &novelChapter, nil
+}
 
 func searchByNet(keyWord, page string) (error, []model.SearchResult) {
 	// 使用网络的
