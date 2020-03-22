@@ -9,9 +9,7 @@ import (
 	"novelweb/generate"
 	"novelweb/model"
 	"novelweb/service/searchEngine"
-	_ "novelweb/service/searchEngine"
 	"sync"
-	_ "sync"
 
 	"github.com/gin-gonic/gin"
 )
