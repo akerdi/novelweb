@@ -21,4 +21,11 @@ var novelRoutes = []Route{
 			service.SearchChapter(),
 		},
 	},
+	{
+		Path:		"/api/novel/content/:md5/:chapterIndex",
+		Method: "POST",
+		Middles:	[]gin.HandlerFunc{
+			service.SearchContent(),
+		},
+	},
 }

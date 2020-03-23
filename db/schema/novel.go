@@ -29,6 +29,16 @@ type NovelChapterElement struct {
 	Href string `json:"href"` // 章节链接
 }
 
+type NovelContent struct {
+	Id int `gorm:"primary_key" json:"id"`
+	//Name string `gorm:"type:varchar(20)" json:"name"`
+	MD5Index string `gorm:"type:varchar(55)" json:"md5Index"`
+	PreChapter string `gorm:"type:varchar(30);" json:"prechapter"`
+	NextChapter string `gorm:"type:varchar(30);" json:"nextchapter"`
+	Content string `gorm:"type:LONGTEXT" json:"content"`
+	ContentURL string `gorm:"type:varchar(50)" json:"contentURL"`
+}
+
 type ChapterElements []NovelChapterElement
 
 //Value json Marshal to byte
