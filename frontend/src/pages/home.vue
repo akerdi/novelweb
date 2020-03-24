@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     searchFunc() {
-      console.log("~~~~~~", this.search)
+      console.log("home~~~~~~", this.search)
       if (_.isEmpty(this.search)) {
         return console.log("empty!!!")
       }
