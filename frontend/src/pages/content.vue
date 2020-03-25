@@ -64,6 +64,9 @@ export default {
     .contentHtml {
       text-align: left;
       font-size: 17px;
+      width: 70%;
+      min-width: 500px;
+      margin: 0 auto;
     }
   }
 </style>

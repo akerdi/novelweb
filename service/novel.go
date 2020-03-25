@@ -158,12 +158,13 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 	novelChapterElement := novelChapter.Chapters[index]
 	var html string
 	if novelChapter.LinkPrefix == "1" {
-		html = novelChapter.OriginURL
+		html = novelChapterElement.Href
 	} else if novelChapter.LinkPrefix == "-1" {
 		html = generate.UrlJoin(novelChapterElement.Href, novelChapter.OriginURL)
 	} else if novelChapter.LinkPrefix == "0" {
 		html = generate.UrlJoin(novelChapterElement.Href, novelChapter.Domain)
 	}
+	log.Println("111111", novelChapterElement)
 	c:= generate.NewFetcher()
 	requestURI, _ := url.ParseRequestURI(novelChapter.Domain)
 	host := requestURI.Host
@@ -182,6 +183,7 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 		novelContent.MD5Index = fmt.Sprintf("%s:%d", novelChapter.MD5, index)
 		novelContent.ContentURL = html
 	})
+	fmt.Println("[SearchContent] html", html)
 	err := c.Visit(html)
 	return &novelContent, err
 }
@@ -217,7 +219,7 @@ func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
 		}
 		chapterElements = append(chapterElements, chapterElement)
 	})
-	
+	fmt.Println("[chapter] html", novelNet.URL)
 	err = c.Visit(novelNet.URL)
 	if err != nil {
 		log.Println("~~~~~~~~~~", err)
