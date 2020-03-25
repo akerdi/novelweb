@@ -8,6 +8,15 @@
     
     cd frontend & yarn dev
     
+## Build
+
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o novelweb_linux
+    
+    CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o novelweb_mac
+    
+    CGO_ENABLED=0 GOOS=windows GOARCH=64 go build -o novelweb_win
+    
+    
 ## Plan List
 
 [ ] 首页推荐

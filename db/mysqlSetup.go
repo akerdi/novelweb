@@ -1,12 +1,14 @@
 package db
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"novelweb/config"
 	"novelweb/db/schema"
 )
 
-const DSN = "root:123456@tcp(localhost:3306)/test?charset=utf8&parseTime=True&loc=Local"
+
 const DRIVER = "mysql"
 
 var db *gorm.DB
@@ -16,6 +18,9 @@ func GetDB() *gorm.DB {
 }
 func OpenDB() {
 	var err error
+	curConfig := config.GetConfig()
+	DSN := fmt.Sprintf("root:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", curConfig.DB.Password, curConfig.DB.Host, curConfig.DB.Port, curConfig.DB.Name)
+	fmt.Println("DSN: ", DSN)
 	db, err = gorm.Open(DRIVER, DSN)
 	if err != nil {
 		panic(err)

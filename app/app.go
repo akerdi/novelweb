@@ -2,13 +2,14 @@ package app
 
 import (
 	"fmt"
-	"novelweb/middlewares"
 	"novelweb/config"
-	"novelweb/routes"
 	"novelweb/db"
-	
+	"novelweb/middlewares"
+	"novelweb/routes"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/contrib/static"
 )
 
 func Init() *gin.Engine {
@@ -33,4 +34,5 @@ func initMiddleware(g *gin.Engine) {
 	g.Use(gzip.Gzip(gzip.DefaultCompression))
 	
 	routes.InitRoute(g)
+	g.Use(static.Serve("/", static.LocalFile("./public", true)))
 }
