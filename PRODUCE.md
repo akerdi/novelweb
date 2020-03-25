@@ -36,3 +36,18 @@ https://segmentfault.com/a/1190000013216540
 这个checkbox 本来就是加载的。
 
 此时我关闭他，然后apply; 再然后checkbox 打开他，再apply，这时就全部正常了。
+
+### MYSQL
+
+    docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:5.7
+    
+    docker exec -it mysql mysql -uroot -p
+    
+    create database novel charset utf8;
+    
+centos - /etc/my.cnf
+将datadir=/var/lib/mysql 注释掉
+
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
