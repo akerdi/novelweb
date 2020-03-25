@@ -50,6 +50,11 @@
       "link_prefix": "0",
       "chapter_selector": "#left .mulu a",
       "content_selector": "#content"
+    },
+    "www.luoxia.com": {
+      "link_prefix": "1",
+      "chapter_selector": "#content-list .book-list a",
+      "content_selector": "#nr1"
     }
   },
   "ignores": {
