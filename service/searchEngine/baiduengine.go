@@ -37,8 +37,8 @@ func (engine *BaiduSearchEngine) EngineRun(novelName, page string, group *sync.W
 	pageIndex, err := strconv.Atoi(page)
 	unsignPageIndex := uint64(pageIndex)
 	if err != nil {
-		fmt.Println("searchKey: ", searchKey, " requestUrl: ", requestUrl, " pageIndex: ", pageIndex)
-		log.Fatal("~~~~~`", err)
+		fmt.Println("[searchEngine.EngineRun] err !!! searchKey: ", searchKey, " requestUrl: ", requestUrl, " pageIndex: ", pageIndex)
+		log.Fatal("[searchEngine.EngineRun] err:", err)
 	}
 	unsignPageIndex -= 1
 	unsignPageIndex = unsignPageIndex * 15
@@ -48,10 +48,10 @@ func (engine *BaiduSearchEngine) EngineRun(novelName, page string, group *sync.W
 		group.Add(1)
 		go engine.extractData(element, group)
 	})
-	fmt.Println("######### requestUrl: ", requestUrl)
+	fmt.Println("searchEngine.EngineRun] requestUrl: ", requestUrl)
 	err = c.Visit(requestUrl)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("searchEngine.EngineRun visit err: ", err)
 	}
 }
 func (engine *BaiduSearchEngine) extractData(element *colly.HTMLElement, group *sync.WaitGroup) {
@@ -86,7 +86,7 @@ func (engine *BaiduSearchEngine) extractData(element *colly.HTMLElement, group *
 	})
 	err := c.Visit(href)
 	if err != nil {
-		fmt.Println("-------", err)
+		fmt.Println("[searchEngine.extractData] visit err: ", err)
 	}
 }
 

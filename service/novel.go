@@ -51,11 +51,10 @@ func SearchNovel() gin.HandlerFunc {
 			dbc = dbFD.Create(&newNovel)
 			novelNets = append(novelNets, newNovel)
 			if dbc.Error != nil {
-				log.Println("~~~~~~~~~~~`", dbc.Error.Error())
+				log.Println("SearchNovel save newNovel err:", dbc.Error.Error())
 				continue
 			}
 		}
-		fmt.Printf("results:: %s\n", novelNets)
 		c.JSON(http.StatusOK, novelNets)
 	}
 }
@@ -69,7 +68,7 @@ func SearchChapter() gin.HandlerFunc {
 		var novelChapter schema.NovelChapter
 		dbc := dbFD.Where("md5 = ?", md5).First(&novelChapter)
 		if dbc.Error == nil {
-			fmt.Println("~~~~~~~~~~~~~", dbc.Error)
+			fmt.Println("[novel.SearchChapter] get novelChapter err: ", dbc.Error)
 			c.JSON(http.StatusOK, novelChapter)
 			return
 		}
@@ -77,7 +76,7 @@ func SearchChapter() gin.HandlerFunc {
 		var novelNet schema.NovelNet
 		dbc = dbFD.Where("md5 = ?", md5).First(&novelNet)
 		if dbc.Error != nil {
-			fmt.Println("@@@@@@@@2", dbc.Error)
+			fmt.Println("[novel.SearchChapter] get novelNet err:", dbc.Error)
 			c.JSON(http.StatusServiceUnavailable, dbc.Error)
 			return
 		}
@@ -85,7 +84,6 @@ func SearchChapter() gin.HandlerFunc {
 		//	c.JSON(http.StatusNoContent, "失败")
 		//	return
 		//}
-		fmt.Println("2222222", novelNet)
 		novelChapterRes, err := searchChapter(&novelNet)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, "")
@@ -183,7 +181,6 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 		novelContent.MD5Index = fmt.Sprintf("%s:%d", novelChapter.MD5, index)
 		novelContent.ContentURL = html
 	})
-	fmt.Println("[SearchContent] html", html)
 	err := c.Visit(html)
 	return &novelContent, err
 }
@@ -222,7 +219,7 @@ func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
 	fmt.Println("[chapter] html", novelNet.URL)
 	err = c.Visit(novelNet.URL)
 	if err != nil {
-		log.Println("~~~~~~~~~~", err)
+		log.Println("[novel.searchChapter] visit err: ", err)
 		return nil, err
 	}
 

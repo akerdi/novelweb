@@ -32,7 +32,6 @@ func ReturnPublic() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		method := context.Request.Method
 		if method == "GET" {
-			fmt.Println("user use GET to get public files")
 			context.File("./public")
 		} else {
 			context.Next()

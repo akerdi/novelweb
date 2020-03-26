@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"log"
 	"novelweb/middlewares"
 	"strings"
@@ -17,7 +16,6 @@ type Route struct {
 
 func applyRoutes(g *gin.Engine, routes []Route) {
 	for _, route := range routes {
-		fmt.Println(route)
 		method := strings.ToUpper(route.Method)
 		if method == "GET" {
 			g.GET(route.Path, route.Middles...)
