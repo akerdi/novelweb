@@ -14,12 +14,14 @@ const DRIVER = "mysql"
 var db *gorm.DB
 
 func GetDB() *gorm.DB {
-	return db.Debug()
+	// config db setting by envirment
+	// db.Debug()
+	return db
 }
 func OpenDB() {
 	var err error
 	curConfig := config.GetConfig()
-	DSN := fmt.Sprintf("root:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", curConfig.DB.Password, curConfig.DB.Host, curConfig.DB.Port, curConfig.DB.Name)
+	DSN := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", curConfig.DB.Username, curConfig.DB.Password, curConfig.DB.Host, curConfig.DB.Port, curConfig.DB.Name)
 	fmt.Println("DSN: ", DSN)
 	db, err = gorm.Open(DRIVER, DSN)
 	if err != nil {

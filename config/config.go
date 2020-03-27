@@ -42,7 +42,7 @@ func InitConfig() Config {
 		Name:     "novelweb",
 		Host:     "127.0.0.1",
 		Port:     27017,
-		Username: "",
+		Username: "root",
 		Password: "",
 	}
 	redis := RedisConfig{
