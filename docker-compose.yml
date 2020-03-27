@@ -4,9 +4,10 @@ services:
     image: registry.gitlab.com/honglian/novelweb
     container_name: ahuang_novel
     environment:
-      - DB_HOST=172.16.10.78
+      - DB_HOST=127.0.0.1
       - DB_PORT=3306
       - DB_NAME=novel
       - DB_PWD=123456
+      - DB_USER=root
     ports:
       - "8900:8900"
