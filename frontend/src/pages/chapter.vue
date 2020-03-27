@@ -1,22 +1,23 @@
 <template lang="pug">
   .chapter-bd
-    el-table.f-m-t-30(:data="chapterList" style="width: 100%")
-      el-table-column(prop="" label="序号" width="50px")
-        template(slot-scope="scope")
-          span {{scope.$index + 1}}
-      el-table-column(prop="name" label="章节")
-        template(slot-scope="scope")
-          a(@click="chooseContent(scope)") {{scope.row.name}}
+    .novelTitle {{title}}
+    .f-m-t-10
+      .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
+        .flex-row-center.f-m-t-20(v-for="index in 4")
+          a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
 </template>
 
 <script>
+import _ from 'lodash'
 import { chapter } from '@/service'
 export default {
   name: "chapter",
   data() {
     return {
       md5: '',
-      chapterList: []
+      chapterList: [],
+      title: '',
+      chapterTitleList: [],
     }
   },
   methods: {
@@ -25,12 +26,29 @@ export default {
         md5: this.md5
       }
       const res = await chapter(params)
+      console.log("@@@", res)
+      this.title = res.data.name || "无题"
       this.chapterList = res.data.Chapters
+      const totalineNum = Math.ceil(this.chapterList.length/4)
+      console.log("totalineNum: ", totalineNum)
+      const novelList = []
+      for (let i=0; i < totalineNum; i++) {
+        const rowList = []
+        for (let j=0; j < 4; j++) {
+          const index = i*4+j
+          const res = _.assign({}, this.chapterList[index])
+          console.log("index:", index, "ree ", res)
+          rowList.push(res.name)
+        }
+        novelList.push(rowList)
+      }
+      this.chapterTitleList = novelList
+      console.log("n9vellist:: ", novelList)
     },
-    chooseContent(scope) {
+    chooseContent(row, index) {
       const query = {
         q: this.md5,
-        i: scope.$index
+        i: index
       }
       this.$router.push({name: "Content", query})
     }
@@ -45,6 +63,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+  .chapter-bd {
+    .novelTitle {
+      font-size: 18px;
+      font-weight: bold;
+      color: #555555;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+    .novelContent {
+      margin: 0 auto;
+      margin-top: 0px;
+      width: 70%;
+      background-color: antiquewhite;
+      justify-content: space-around;
+      .chapterTitle {
+        background-color: aquamarine;
+        justify-content: space-between;
+        padding: 8px;
+      }
+    }
+  }
 </style>
 

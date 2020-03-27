@@ -1,6 +1,13 @@
 <template lang="pug">
   .content-bd
-    .contentHtml(v-html='html_content')
+    .flex-row-center
+      el-button(type="primary" @click="handleLast") Last
+      el-button(type="primary" @click="handleNext") Next
+    .f-m-t-20.f-m-b-20
+      .contentHtml(v-html='html_content')
+    .flex-row-center
+      el-button(type="primary" @click="handleLast") Last
+      el-button(type="primary" @click="handleNext") Next
 </template>
 
 <script>
@@ -41,7 +48,19 @@ export default {
       // location.href = `/content?q=${this.md5}&i=${index}`
       this.index = index
       this.getContent()
-    }
+    },
+    handleNext() {
+      let index = this.index
+      index++
+      this.index = index
+      this.getContent()
+    },
+    handleLast() {
+      let index = this.index
+      index--
+      this.index = index
+      this.getContent()
+    },
   },
   beforeDestroy() {
     document.removeEventListener('keyup', this.handleKey)
@@ -65,7 +84,7 @@ export default {
       text-align: left;
       font-size: 17px;
       width: 70%;
-      min-width: 500px;
+      min-width: 300px;
       margin: 0 auto;
     }
   }

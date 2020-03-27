@@ -4,8 +4,8 @@
       .flex-colume-center.flexContainer
         img(src="../assets/images/logo.png")
         .flex-row-center.f-m-t-10
-          el-input(v-model="search" placeholder="小说...")
-          el-button.f-m-l-20(@click="searchFunc" type="primary") 搜索
+          el-input(v-model="search" @keyup.enter.native='handleSearch' placeholder="小说...")
+          el-button.f-m-l-20(@click="handleSearch" type="primary") 搜索
 </template>
 
 <script>
@@ -17,8 +17,7 @@ export default {
     }
   },
   methods: {
-    searchFunc() {
-      console.log("home~~~~~~", this.search)
+    handleSearch() {
       if (_.isEmpty(this.search)) {
         return console.log("empty!!!")
       }
@@ -34,11 +33,11 @@ export default {
     position: fixed;
     width: 100%;
     height: 100%;
-    background-color: antiquewhite;
+    background-color: #eeeeee;
     .inputContainer {
       border-radius: 25px;
       width: 40%;
-      min-width: 500px;
+      min-width: 350px;
       background-color: blueviolet;
       margin: 0 auto;
       margin-top: 20vh;
