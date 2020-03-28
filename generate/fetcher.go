@@ -6,7 +6,7 @@ import (
 )
 
 func NewFetcher() *colly.Collector {
-	uaStr := "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+	uaStr := "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
 	c := colly.NewCollector(colly.DetectCharset(), )
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Connection", "keep-alive")

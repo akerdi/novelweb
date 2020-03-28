@@ -29,6 +29,7 @@ export default {
       }
       const res = await content(params)
       this.html_content = res.data.content
+      scrollTo(0,0);
     },
     handleKey(e) {
       let index = this.index

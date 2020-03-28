@@ -1,7 +1,8 @@
 <template lang="pug">
   .chapter-bd
     .novelTitle {{title}}
-    .f-m-t-10
+    .chapterContainer
+      el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
       .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
         .flex-row-center.f-m-t-20(v-for="index in 4")
           a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
@@ -43,7 +44,6 @@ export default {
         novelList.push(rowList)
       }
       this.chapterTitleList = novelList
-      console.log("n9vellist:: ", novelList)
     },
     chooseContent(row, index) {
       const query = {
@@ -64,6 +64,13 @@ export default {
 
 <style lang="scss" scoped>
   .chapter-bd {
+    .back-ball {
+      background-color: tomato;
+      color: #fff;
+      border-radius: 22px;
+      padding: 10px;
+    }
+    overflow: auto;
     .novelTitle {
       font-size: 18px;
       font-weight: bold;
@@ -71,18 +78,22 @@ export default {
       margin: 0 auto;
       margin-top: 40px;
     }
-    .novelContent {
-      margin: 0 auto;
-      margin-top: 0px;
-      width: 70%;
-      background-color: antiquewhite;
-      justify-content: space-around;
-      .chapterTitle {
-        background-color: aquamarine;
-        justify-content: space-between;
-        padding: 8px;
+    .chapterContainer {
+      padding: 20px;
+      .novelContent {
+        margin: 0 auto;
+        margin-top: 0px;
+        width: 70%;
+        background-color: antiquewhite;
+        justify-content: space-around;
+        .chapterTitle {
+          justify-content: space-between;
+          padding: 8px;
+          text-align: start;
+        }
       }
     }
+
   }
 </style>
 

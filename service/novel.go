@@ -26,6 +26,7 @@ func SearchNovel() gin.HandlerFunc {
 		var page = "1"
 		page = c.Param("page")
 		dbFD := db.GetDB()
+		var totalNovels [][]schema.NovelNet
 		var novelNets []schema.NovelNet
 		likeStr := fmt.Sprintf("%%%s%%", keyWord)
 		dbc := dbFD.Where("title LIKE ?", likeStr).Limit(15).Find(&novelNets)
@@ -34,11 +35,17 @@ func SearchNovel() gin.HandlerFunc {
 			c.JSON(http.StatusServiceUnavailable, nil)
 			return
 		}
-		if len(novelNets) > 0 {
-			fmt.Println("database got data : ", novelNets)
-			c.JSON(http.StatusOK, novelNets)
-			return
-		}
+
+		totalNovels = append(totalNovels, novelNets)
+		// clear novelNets
+		novelNets = novelNets[:0]
+
+		//if len(novelNets) > 0 {
+		//	fmt.Println("database got data : ", novelNets)
+		//	c.JSON(http.StatusOK, novelNets)
+		//	return
+		//}
+		// 搜到小说，还继续搜索网络。同时保存
 		_, results := searchByNet(keyWord, page)
 		for _, result := range results {
 			newNovel := schema.NovelNet{
@@ -55,7 +62,8 @@ func SearchNovel() gin.HandlerFunc {
 				continue
 			}
 		}
-		c.JSON(http.StatusOK, novelNets)
+		totalNovels = append(totalNovels, novelNets)
+		c.JSON(http.StatusOK, totalNovels)
 	}
 }
 
@@ -177,11 +185,14 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 			return
 			//return &novelContent, errors.New(fmt.Sprintf("%s 解析 %s 网址 %v", novelChapter.Name, html, err))
 		}
-		novelContent.Content = htmlContent
-		novelContent.MD5Index = fmt.Sprintf("%s:%d", novelChapter.MD5, index)
-		novelContent.ContentURL = html
+		if htmlContent != "" {
+			novelContent.Content = htmlContent
+			novelContent.MD5Index = fmt.Sprintf("%s:%d", novelChapter.MD5, index)
+			novelContent.ContentURL = html
+		}
 	})
 	err := c.Visit(html)
+	fmt.Println("[novel.searchContent] html: ", html)
 	return &novelContent, err
 }
 
@@ -194,13 +205,12 @@ func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
 	}
 	host  := requestURI.Host
 	chapterSelector, ok := config.RuleConfig.Rules[host]["chapter_selector"].(string)
+	fmt.Printf("%s use chapterSelector %s\n", novelNet.Title, chapterSelector)
 	if !ok {
-		log.Println("11111")
 		return &novelChapter, errors.New(fmt.Sprintf("%s in RuleConfig.Rules chapter_selector is not ok", host))
 	}
 	chapterLinkPrefix, ok := config.RuleConfig.Rules[host]["link_prefix"].(string)
 	if !ok {
-		log.Println("22222")
 		return &novelChapter, errors.New(fmt.Sprintf("%s in RuleConfig.Rules link_prefix is not ok", host))
 	}
 	var chapterElements []schema.NovelChapterElement
@@ -222,13 +232,14 @@ func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
 		log.Println("[novel.searchChapter] visit err: ", err)
 		return nil, err
 	}
-
-	novelChapter.Chapters = chapterElements
-	novelChapter.MD5 = novelNet.MD5
-	novelChapter.LinkPrefix = chapterLinkPrefix
-	novelChapter.OriginURL = novelNet.URL
-	novelChapter.Domain = fmt.Sprintf("%s://%s", requestURI.Scheme, requestURI.Host)
-	log.Println("3333333", novelChapter)
+	if len(chapterElements) > 0 {
+		novelChapter.Chapters = chapterElements
+		novelChapter.MD5 = novelNet.MD5
+		novelChapter.LinkPrefix = chapterLinkPrefix
+		novelChapter.OriginURL = novelNet.URL
+		novelChapter.Name = novelNet.Title
+		novelChapter.Domain = fmt.Sprintf("%s://%s", requestURI.Scheme, requestURI.Host)
+	}
 	return &novelChapter, nil
 }
 
