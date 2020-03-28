@@ -17,5 +17,5 @@ echo `dirname $0`
 
 echo "start build docker container..."
 # 开始打包docker 文件；然后上传
-docker build -t registry.gitlab.com/honglian/novelweb . && echo "build docker latest image complete!"
-docker push registry.gitlab.com/honglian/novelweb && echo "push docker latest image complete!"
+docker build -t registry.gitlab.com/honglian/novelweb . && echo "build docker latest image complete..."
+docker push registry.gitlab.com/honglian/novelweb && echo "push docker latest image complete..."
