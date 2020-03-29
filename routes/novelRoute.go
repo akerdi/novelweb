@@ -35,4 +35,11 @@ var novelRoutes = []Route{
 			service.SearchContent(),
 		},
 	},
+	{
+		Path: "/api/novel/configRule",
+		Method: "POST",
+		Middles: []gin.HandlerFunc{
+			service.ConfigRule(),
+		},
+	},
 }

@@ -9,5 +9,7 @@ services:
       - DB_NAME=novel
       - DB_PWD=123456
       - DB_USER=root
+    volumes:
+      - ./rule:/app/rule
     ports:
       - "8900:8900"

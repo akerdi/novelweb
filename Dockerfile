@@ -7,7 +7,7 @@ ENV NODE_ENV production
 # 首先安装依赖包
 COPY staticBuilds/novelweb_linux /app/
 COPY public /app/public
-COPY rule.json /app
+COPY rule /app/rule
 
 EXPOSE 8900
 

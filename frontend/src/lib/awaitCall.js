@@ -2,8 +2,8 @@ const util = require("util")
 
 export function callAsync(promise) {
   return promise
-    .then(data => [nil, data])
-    .catch(e => [e, nil])
+    .then(data => [null, data])
+    .catch(e => [e, null])
 }
 
 export function call(func, ...args) {

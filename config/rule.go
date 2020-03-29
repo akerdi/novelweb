@@ -27,7 +27,11 @@ func init() {
 	// link_prefix ||| -1 代表 章节页面网址+章节a.href ||| 0 代表使用域名+章节a.href ||| 1 代表章节a.href ||| 2 代表需要拼接后缀.html（如/dir.html 等, 如果已存在.html 则不再添加）
 	RuleConfig = &ruleConfig{}
 	RuleConfig.Engines = []string{"baidu"}
-	fileReader, err := os.Open("rule.json")
+	ConfigRule()
+}
+
+func ConfigRule() {
+	fileReader, err := os.Open("rule/rule.json")
 	if err != nil {
 		log.Fatal("read rule.json meet error: ", err)
 	}

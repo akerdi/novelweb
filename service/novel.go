@@ -154,6 +154,13 @@ func SearchContent() gin.HandlerFunc {
 	}
 }
 
+func ConfigRule() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		config.ConfigRule()
+		context.String(http.StatusOK, "OK")
+	}
+}
+
 // helper
 
 func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.NovelContent, error)  {

@@ -16,7 +16,27 @@
     
     CGO_ENABLED=0 GOOS=windows GOARCH=64 go build -o novelweb_win
     
-    
+
+## Directory
+
+```conf
+/app
+/config // 配置目录
+/db // 配置db目录
+/db/schema // 数据库schema
+/frontend // 开发前段目录
+/generate // 一些方便的工具、对象
+/middlewares
+/model
+/public // 前段打包后的html 页面
+/routes
+/rule // 网站模板文件
+/service
+/staticBuilds // 打包的go 执行文件 
+```
+
+
+
 ## Plan List
 
 [ ] 首页推荐
