@@ -19,34 +19,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func SearchRecommandNovel() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		keyWord := context.Param("keyword")
+		dbFD := db.GetDB()
+		likeStr := fmt.Sprintf("%%%s%%", keyWord)
+		var novelNets []schema.NovelNet
+		dbc := dbFD.Where("title LIKE ?", likeStr).Limit(15).Find(&novelNets)
+		if dbc.Error != nil {
+			fmt.Println("database meet error!!!1", dbc.Error)
+			context.JSON(http.StatusServiceUnavailable, nil)
+			return
+		}
+		context.JSON(http.StatusOK, novelNets)
+	}
+}
+
 // SearchNovel 搜索关键字找到对应网站
 func SearchNovel() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		keyWord := c.Param("keyword")
 		var page = "1"
 		page = c.Param("page")
-		dbFD := db.GetDB()
-		var totalNovels [][]schema.NovelNet
-		var novelNets []schema.NovelNet
-		likeStr := fmt.Sprintf("%%%s%%", keyWord)
-		dbc := dbFD.Where("title LIKE ?", likeStr).Limit(15).Find(&novelNets)
-		if dbc.Error != nil {
-			fmt.Println("database meet error!!!1", dbc.Error)
-			c.JSON(http.StatusServiceUnavailable, nil)
-			return
-		}
-
-		totalNovels = append(totalNovels, novelNets)
-		// clear novelNets
-		novelNets = novelNets[:0]
-
-		//if len(novelNets) > 0 {
-		//	fmt.Println("database got data : ", novelNets)
-		//	c.JSON(http.StatusOK, novelNets)
-		//	return
-		//}
+		var totalNovels []schema.NovelNet
 		// 搜到小说，还继续搜索网络。同时保存
 		_, results := searchByNet(keyWord, page)
+		dbFD := db.GetDB()
 		for _, result := range results {
 			newNovel := schema.NovelNet{
 				IsParse: uint64(result.IsParse),
@@ -55,14 +53,13 @@ func SearchNovel() gin.HandlerFunc {
 			}
 			hashStr := fmt.Sprintf("%s%s", newNovel.URL, newNovel.Title)
 			newNovel.MD5 = generate.GetMD5Hash(hashStr)
-			dbc = dbFD.Create(&newNovel)
-			novelNets = append(novelNets, newNovel)
+			totalNovels = append(totalNovels, newNovel)
+			dbc := dbFD.Create(&newNovel)
 			if dbc.Error != nil {
 				log.Println("SearchNovel save newNovel err:", dbc.Error.Error())
 				continue
 			}
 		}
-		totalNovels = append(totalNovels, novelNets)
 		c.JSON(http.StatusOK, totalNovels)
 	}
 }

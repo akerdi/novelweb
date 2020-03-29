@@ -15,6 +15,13 @@ var novelRoutes = []Route{
 		},
 	},
 	{
+		Path: "/api/novel/searchRecommand//:keyword",
+		Method: "POST",
+		Middles: []gin.HandlerFunc{
+			service.SearchRecommandNovel(),
+		},
+	},
+	{
 		Path:   "/api/novel/chapter/:md5",
 		Method: "POST",
 		Middles: []gin.HandlerFunc{

@@ -14,12 +14,12 @@
             a(@click="chooseChapter(scope.row)")
               .flex-colume-center.chapterRow
                 span {{scope.row.title}}
-                span ({{scope.row.local ? "来源于[缓存]" : "来源于[匹配]"}})
+                span ({{scope.row.local ? "来源于[本地缓存]" : "来源于[搜索引擎]"}})
       el-pagination.searchPagination(small @current-change="handleCurrentChange" :current-page.sync="currentPage" layout="prev, pager, next" :total="80" :page-size="10")
 </template>
 
 <script>
-import { search } from '@/service'
+import { search, searchRecommand } from '@/service'
 export default {
   name: 'search',
   data() {
@@ -41,18 +41,22 @@ export default {
         q: this.searchText
       }
       this.loading = true
-      const data = await search(params)
-      this.loading = false
-      const arrayLocal = data.data[0]
-      const arrayNet = data.data[1]
-      this.novellist = []
-      for (const novelBook of arrayLocal) {
-        novelBook.local = true
-        this.novellist.push(novelBook)
+      let data
+      // 首页时，进行本地数据库匹配
+      if (this.currentPage === 1) {
+        data = await searchRecommand(params)
+        console.log("~~~~~", data.data)
+        this.novellist = data.data.map(v => {
+          v.local = true
+          return v
+        })
+        if (this.novellist.length) this.loading = false
       }
-      for (const novelBook of arrayNet) {
-        novelBook.local =false
-        this.novellist.push(novelBook)
+
+      data = await search(params)
+      this.loading = false
+      if (data.data && data.data.length) {
+        this.novellist.push(...data.data)
       }
     },
     chooseChapter(row) {
