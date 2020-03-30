@@ -32,35 +32,31 @@ export default {
       scrollTo(0,0);
     },
     handleKey(e) {
-      let index = this.index
       switch (e.keyCode) {
-        case 39: // right
-          index = parseInt(this.index)
-          index++
-          break;
-        case 37: // left
-          index = parseInt(this.index)
-          index--
-          break
-        default:
-          return
+        case 39: this.handleNext(); break
+        case 37: this.handleLast(); break
       }
-      // TODO 请求数据
-      // location.href = `/content?q=${this.md5}&i=${index}`
-      this.index = index
-      this.getContent()
     },
     handleNext() {
       let index = this.index
       index++
       this.index = index
-      this.getContent()
+      // this.getContent()
+      const query = {
+        q: this.md5,
+        i: this.index
+      }
+      this.$router.push({name: "Content", query})
     },
     handleLast() {
       let index = this.index
       index--
       this.index = index
-      this.getContent()
+      const query = {
+        q: this.md5,
+        i: this.index
+      }
+      this.$router.push({name: "Content", query})
     },
   },
   beforeDestroy() {

@@ -95,9 +95,30 @@
       "link_prefix": "0",
       "chapter_selector": "#list a",
       "content_selector": "#content"
+    },
+    "www.50xsf.com": {
+      "link_prefix": "-1",
+      "chapter_selector": ".mread table a",
+      "content_selector": "#ccontent"
+    },
+    "www.xqishuta.com": {
+      "link_prefix": "-1",
+      "chapter_selector": "#info .pc_list a",
+      "content_selector": "#content1"
+    },
+    "www.qiushubang.com": {
+      "link_prefix": "0",
+      "chapter_selector": ".chapterCon a",
+      "content_selector": "#yellow .articleCon"
+    },
+    "www.38yuedu.com": {
+      "link_prefix": "0",
+      "chapter_selector": ".mulu a",
+      "content_selector": ".yd_text2"
     }
   },
   "ignores": {
+    "dpcq1.net": 1,
     "www.bxwx666.org": 1,
     "www.myitit.com": 1,
     "www.17k.com": 1,

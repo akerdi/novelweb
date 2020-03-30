@@ -11,7 +11,7 @@
             span {{scope.$index + 1}}
         el-table-column(prop="title" label="书名")
           template(slot-scope="scope")
-            a(@click="chooseChapter(scope.row)")
+            a(:href="scope.row.href" @click="chooseChapter(scope.row)")
               .flex-colume-center.novelRow
                 span.novelTitle {{scope.row.title}}
                 span.novelAddition ({{scope.row.local ? "来源于[本地缓存]" : "来源于[搜索引擎]"}})
@@ -49,6 +49,7 @@ export default {
         console.log("~~~~~", data.data)
         this.novellist = data.data.map(v => {
           v.local = true
+          v.href = `/chapter?q=${v.md5}`
           return v
         })
         if (this.novellist.length) this.loading = false
@@ -59,7 +60,11 @@ export default {
       [err, data] = await callAsync(search(params))
       this.loading = false
       if (data.data && data.data.length) {
-        this.novellist.push(...data.data)
+        const array = data.data.map(v => {
+          v.href = `/chapter?q=${v.md5}`
+          return v
+        })
+        this.novellist.push(...array)
       }
     },
     chooseChapter(row) {
