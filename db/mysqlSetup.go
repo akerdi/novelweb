@@ -8,7 +8,6 @@ import (
 	"novelweb/db/schema"
 )
 
-
 const DRIVER = "mysql"
 
 var db *gorm.DB
@@ -28,7 +27,7 @@ func OpenDB() {
 		panic(err)
 	}
 	if !db.HasTable(&schema.NovelNet{}) {
-		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&schema.NovelNet{}).Error; err != nil {
+		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").CreateTable(&schema.NovelNet{}).Error; err != nil {
 			panic(err)
 		}
 	}
@@ -38,7 +37,7 @@ func OpenDB() {
 		}
 	}
 	if !db.HasTable(&schema.NovelContent{}) {
-		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&schema.NovelContent{}).Error; err != nil {
+		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").CreateTable(&schema.NovelContent{}).Error; err != nil {
 			panic(err)
 		}
 	}

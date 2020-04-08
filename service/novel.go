@@ -14,6 +14,7 @@ import (
 	"novelweb/model"
 	"novelweb/service/searchEngine"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -111,18 +112,18 @@ func SearchContent() gin.HandlerFunc {
 		}
 		chapterIndex, err := strconv.Atoi(chapterIndexStr)
 		if err != nil {
-			log.Println("~~~~~~~", err)
+			log.Println("[novel.SearchContent] err: ", err)
 			context.JSON(http.StatusServiceUnavailable, err)
 			return
 		}
 		uchapterIndex := uint64(chapterIndex)
 		md5 := context.Param("md5")
-		log.Println("####3", chapterIndex, md5)
+		log.Println("[novel.SearchContent] index: md5: ", chapterIndex, md5)
 		var novelChapter schema.NovelChapter
 		dbFD := db.GetDB()
 		dbc := dbFD.Where("md5 = ?", md5).First(&novelChapter)
 		if dbc.Error != nil {
-			log.Println("@@@@@", dbc.Error)
+			log.Println("[novel.SearchContent] dbcError:", dbc.Error)
 			context.JSON(http.StatusServiceUnavailable, "")
 			return
 		}
@@ -130,7 +131,7 @@ func SearchContent() gin.HandlerFunc {
 		var novelContentLocal schema.NovelContent
 		dbc = dbFD.Where("md5_index = ?", md5+":"+chapterIndexStr).First(&novelContentLocal)
 		if dbc.Error == nil {
-			log.Println("@@@@@@@@#############!@#$%^%^^&^%*&^(*&^(&*(*&$%^%$#%$##")
+			log.Println("[novel.SearchContent] dbcError2:", dbc.Error)
 			context.JSON(http.StatusOK, novelContentLocal)
 			return
 		}
@@ -141,13 +142,13 @@ func SearchContent() gin.HandlerFunc {
 			return
 		}
 		if (schema.NovelContent{}) == *novelContent {
-			context.JSON(http.StatusNoContent, "")
+			context.JSON(http.StatusNoContent, nil)
 			return
 		}
 		dbc = dbFD.Create(&novelContent)
 		if dbc.Error != nil {
-			log.Println("###########",dbc.Error)
-			context.JSON(http.StatusUnauthorized, "")
+			log.Println("###########", dbc.Error)
+			context.JSON(http.StatusServiceUnavailable, nil)
 			return
 		}
 		context.JSON(http.StatusOK, novelContent)
@@ -163,7 +164,7 @@ func ConfigRule() gin.HandlerFunc {
 
 // helper
 
-func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.NovelContent, error)  {
+func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.NovelContent, error) {
 	var novelContent schema.NovelContent
 	novelChapterElement := novelChapter.Chapters[index]
 	var html string
@@ -175,7 +176,7 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 		html = generate.UrlJoin(novelChapterElement.Href, novelChapter.Domain)
 	}
 	log.Println("111111", novelChapterElement)
-	c:= generate.NewFetcher()
+	c := generate.NewFetcher()
 	requestURI, _ := url.ParseRequestURI(novelChapter.Domain)
 	host := requestURI.Host
 	contentSelector, _ := config.RuleConfig.Rules[host]["content_selector"].(string)
@@ -184,6 +185,7 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 	}
 	c.OnHTML(contentSelector, func(element *colly.HTMLElement) {
 		htmlContent, err := element.DOM.Html()
+		htmlContent = strings.TrimPrefix(htmlContent, " ")
 		if err != nil {
 			log.Println(fmt.Sprintf("%s 解析 %s 网址 %v", novelChapter.Name, html, err))
 			return
@@ -196,7 +198,7 @@ func searchContent(novelChapter *schema.NovelChapter, index uint64) (*schema.Nov
 		}
 	})
 	err := c.Visit(html)
-	fmt.Println("[novel.searchContent] html: ", html)
+	fmt.Println("[novel.searchContent] html: ", html, "selector: ", contentSelector)
 	return &novelContent, err
 }
 
@@ -207,7 +209,7 @@ func searchChapter(novelNet *schema.NovelNet) (*schema.NovelChapter, error) {
 	if err != nil {
 		return &novelChapter, err
 	}
-	host  := requestURI.Host
+	host := requestURI.Host
 	chapterSelector, ok := config.RuleConfig.Rules[host]["chapter_selector"].(string)
 	fmt.Printf("%s use chapterSelector %s\n", novelNet.Title, chapterSelector)
 	if !ok {

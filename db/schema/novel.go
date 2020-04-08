@@ -7,21 +7,21 @@ import (
 )
 
 type NovelNet struct {
-	Id int `gorm:"primary_key" json:"id"`
-	IsParse uint64 `json:"isParse"` // 是否解析过数据，已经存储在redis 中
-	URL string `gorm:"type:varchar(120);not null;" json:"url"` // 真实路由
-	Title string `gorm:"type:varchar(150);not null;" json:"title"` // 网站抬头
-	MD5 string `gorm:"type:varchar(50); not null;unique_index;" json:"md5"` // 使用RealURL+URLTitle 的编码
+	Id      int    `gorm:"primary_key" json:"id"`
+	IsParse uint64 `json:"isParse"`                                             // 是否解析过数据，已经存储在redis 中
+	URL     string `gorm:"type:varchar(120);not null;" json:"url"`              // 真实路由
+	Title   string `gorm:"type:varchar(150);not null;" json:"title"`            // 网站抬头
+	MD5     string `gorm:"type:varchar(50); not null;unique_index;" json:"md5"` // 使用RealURL+URLTitle 的编码
 }
 
 type NovelChapter struct {
-	Id int `gorm:"primary_key" json:"id"`
-	MD5 string `gorm:"type:varchar(50);not null;unique_index" json:"md5"`
-	Name string `gorm:"type.varchar(150);" json:"name"`
-	Chapters ChapterElements `gorm:"type:LONGTEXT;not null"`
-	LinkPrefix string `gorm:"type.varchar(8);not null;"`
-	OriginURL string `gorm:"type.varchar(120);"`
-	Domain string `gorm:"type.varchar(120)"`
+	Id         int             `gorm:"primary_key" json:"id"`
+	MD5        string          `gorm:"type:varchar(50);not null;unique_index" json:"md5"`
+	Name       string          `gorm:"type.varchar(150);" json:"name"`
+	Chapters   ChapterElements `gorm:"type:LONGTEXT;not null"`
+	LinkPrefix string          `gorm:"type.varchar(8);not null;"`
+	OriginURL  string          `gorm:"type.varchar(120);"`
+	Domain     string          `gorm:"type.varchar(120)"`
 }
 
 type NovelChapterElement struct {
@@ -32,11 +32,11 @@ type NovelChapterElement struct {
 type NovelContent struct {
 	Id int `gorm:"primary_key" json:"id"`
 	//Name string `gorm:"type:varchar(20)" json:"name"`
-	MD5Index string `gorm:"type:varchar(55)" json:"md5Index"`
-	PreChapter string `gorm:"type:varchar(30);" json:"prechapter"`
+	MD5Index    string `gorm:"type:varchar(55)" json:"md5Index"`
+	PreChapter  string `gorm:"type:varchar(30);" json:"prechapter"`
 	NextChapter string `gorm:"type:varchar(30);" json:"nextchapter"`
-	Content string `gorm:"type:LONGTEXT" json:"content"`
-	ContentURL string `gorm:"type:varchar(150)" json:"contentURL"`
+	Content     string `gorm:"type:LONGTEXT CHARACTER SET utf8mb4" json:"content"`
+	ContentURL  string `gorm:"type:varchar(150)" json:"contentURL"`
 }
 
 type ChapterElements []NovelChapterElement
