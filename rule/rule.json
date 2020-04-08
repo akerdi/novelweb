@@ -46,11 +46,6 @@
       "chapter_selector": "#left .mulu a",
       "content_selector": "#content"
     },
-    "www.luoxia.com": {
-      "link_prefix": "1",
-      "chapter_selector": "#content-list .book-list a",
-      "content_selector": "#nr1"
-    },
     "www.fpzw.com": {
       "link_prefix": "-1",
       "chapter_selector": ".book a",
@@ -133,6 +128,7 @@
     }
   },
   "ignores": {
+    "www.luoxia.com": 1,
     "dpcq1.net": 1,
     "www.bxwx666.org": 1,
     "www.myitit.com": 1,
