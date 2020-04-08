@@ -41,7 +41,7 @@ export default {
       let index = this.index
       index++
       this.index = index
-      // this.getContent()
+      this.getContent()
       const query = {
         q: this.md5,
         i: this.index
@@ -52,6 +52,7 @@ export default {
       let index = this.index
       index--
       this.index = index
+      this.getContent()
       const query = {
         q: this.md5,
         i: this.index
@@ -61,6 +62,9 @@ export default {
   },
   beforeDestroy() {
     document.removeEventListener('keyup', this.handleKey)
+  },
+  updated() {
+    console.log("@@@@@@@@@@@@2", "wakahahhhhh")
   },
   mounted() {
     if (this.$route.query) {
