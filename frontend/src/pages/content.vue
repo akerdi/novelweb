@@ -33,47 +33,54 @@ export default {
     },
     handleKey(e) {
       switch (e.keyCode) {
-        case 39: this.handleNext(); break
-        case 37: this.handleLast(); break
+        case 39:
+          this.handleNext()
+          break
+        case 37:
+        this.handleLast()
+        break
       }
     },
     handleNext() {
       let index = this.index
       index++
       this.index = index
-      this.getContent()
       const query = {
         q: this.md5,
         i: this.index
       }
-      this.$router.push({name: "Content", query})
+      this.$router.replace({query})
     },
     handleLast() {
       let index = this.index
       index--
       this.index = index
-      this.getContent()
       const query = {
         q: this.md5,
         i: this.index
       }
-      this.$router.push({name: "Content", query})
+      this.$router.replace({query})
     },
+    init() {
+      if (this.$route.query) {
+        const {q, i} = this.$route.query
+        this.md5 = q
+        this.index = i
+        this.getContent()
+      }
+    }
   },
   beforeDestroy() {
     document.removeEventListener('keyup', this.handleKey)
   },
-  updated() {
-    console.log("@@@@@@@@@@@@2", "wakahahhhhh")
-  },
   mounted() {
-    if (this.$route.query) {
-      const {q, i} = this.$route.query
-      this.md5 = q
-      this.index = i
-      this.getContent()
-    }
     document.addEventListener('keyup', this.handleKey)
+  },
+  watch: {
+    $route: {
+      handler: 'init',
+      immediate: true
+    }
   }
 }
 </script>

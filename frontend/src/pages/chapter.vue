@@ -38,7 +38,6 @@ export default {
         for (let j=0; j < 4; j++) {
           const index = i*4+j
           const res = _.assign({}, this.chapterList[index])
-          console.log("index:", index, "ree ", res)
           rowList.push(res.name)
         }
         novelList.push(rowList)
