@@ -66,6 +66,7 @@ export default {
         })
         this.novellist.push(...array)
       }
+      if (this.novellist.length) this.$router.replace({query: {q: this.searchText}})
     },
     chooseChapter(row) {
       const query = {

@@ -1,13 +1,19 @@
 <template lang="pug">
   .content-bd
-    .flex-row-center
-      el-button(type="primary" @click="handleLast") Last
-      el-button(type="primary" @click="handleNext") Next
+    .novelTitle {{this.data.name || "无题"}}
+    .elementTitle.f-m-t-10 {{this.data.element.name}}
+    .flex-row-center.f-m-t-10
+      el-button.f-m-r-30(type="text" @click="handleLast") 上一章
+      el-button(type="text" size="medium" @click="handleNext") 下一章
     .f-m-t-20.f-m-b-20
-      .contentHtml(v-html='html_content')
-    .flex-row-center
-      el-button(type="primary" @click="handleLast") Last
-      el-button(type="primary" @click="handleNext") Next
+      .contentHtml(v-html='this.data.content.content')
+    .flex-row-center.f-m-t-10
+      el-button.f-m-r-30(type="text" @click="handleLast") 上一章
+      el-button(type="text" @click="handleNext") 下一章
+    .link_tips.f-m-t-10(v-if="this.data")
+      span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.
+
+    i.loadingIcon(v-show="loading" class="el-icon-loading")
 </template>
 
 <script>
@@ -18,7 +24,8 @@ export default {
     return {
       md5: '',
       index: '',
-      html_content: ''
+      data: {},
+      loading: false
     }
   },
   methods: {
@@ -27,8 +34,11 @@ export default {
         md5: this.md5,
         index: this.index
       }
+      this.loading = true
       const res = await content(params)
-      this.html_content = res.data.content
+      this.loading = false
+      this.data = res.data
+      console.log("$$$$$$$$$", res.data)
       scrollTo(0,0);
     },
     handleKey(e) {
@@ -88,6 +98,24 @@ export default {
 <style lang="scss" scoped>
   .content-bd {
     padding: 20px 0px;
+    .elementTitle {
+      font-size: 16px;
+      color: #555555;
+    }
+    .loadingIcon {
+      position: absolute;
+      right: 48px;
+      bottom: 48px;
+      width: 50px;
+      height: 50px;
+    }
+    .novelTitle {
+      font-size: 18px;
+      font-weight: bold;
+      color: #555555;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
     .contentHtml {
       text-align: left;
       font-size: 17px;

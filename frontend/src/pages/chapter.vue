@@ -1,11 +1,14 @@
 <template lang="pug">
   .chapter-bd
-    .novelTitle {{title}}
+    .novelTitle {{this.chapter.name || "无题"}}
     .chapterContainer
       el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
       .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
         .flex-row-center.f-m-t-20(v-for="index in 4")
           a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
+    .link_tips(v-if="this.chapter.OriginURL")
+      span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
+      a(:href="this.chapter.OriginURL" target="__blank") 原网址
 </template>
 
 <script>
@@ -19,6 +22,7 @@ export default {
       chapterList: [],
       title: '',
       chapterTitleList: [],
+      chapter: {}
     }
   },
   methods: {
@@ -27,17 +31,20 @@ export default {
         md5: this.md5
       }
       const res = await chapter(params)
-      console.log("@@@", res)
-      this.title = res.data.name || "无题"
-      this.chapterList = res.data.Chapters
-      const totalineNum = Math.ceil(this.chapterList.length/4)
+      if (res.data) this.chapter = res.data.chapter
+      if (!this.chapter) {
+        return this.$message.error("没有找到数据")
+      }
+      console.log("$$$$%^%^^^^", this.chapter)
+      const chapterList = this.chapter.Chapters
+      const totalineNum = Math.ceil(chapterList.length/4)
       console.log("totalineNum: ", totalineNum)
       const novelList = []
       for (let i=0; i < totalineNum; i++) {
         const rowList = []
         for (let j=0; j < 4; j++) {
           const index = i*4+j
-          const res = _.assign({}, this.chapterList[index])
+          const res = _.assign({}, chapterList[index])
           rowList.push(res.name)
         }
         novelList.push(rowList)
@@ -84,7 +91,7 @@ export default {
         margin-top: 0px;
         width: 70%;
         background-color: antiquewhite;
-        justify-content: space-around;
+        justify-content: flex-start;
         .chapterTitle {
           justify-content: space-between;
           padding: 8px;

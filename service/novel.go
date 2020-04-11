@@ -75,7 +75,9 @@ func SearchChapter() gin.HandlerFunc {
 		dbc := dbFD.Where("md5 = ?", md5).First(&novelChapter)
 		if dbc.Error == nil {
 			fmt.Println("[novel.SearchChapter] get novelChapter err: ", dbc.Error)
-			c.JSON(http.StatusOK, novelChapter)
+			c.JSON(http.StatusOK, gin.H{
+				"chapter": novelChapter,
+			})
 			return
 		}
 
@@ -100,7 +102,9 @@ func SearchChapter() gin.HandlerFunc {
 			c.JSON(http.StatusServiceUnavailable, "")
 			return
 		}
-		c.JSON(http.StatusOK, novelChapterRes)
+		c.JSON(http.StatusOK, gin.H{
+			"chapter": novelChapterRes,
+		})
 	}
 }
 
@@ -132,9 +136,16 @@ func SearchContent() gin.HandlerFunc {
 		dbc = dbFD.Where("md5_index = ?", md5+":"+chapterIndexStr).First(&novelContentLocal)
 		if dbc.Error == nil {
 			log.Println("[novel.SearchContent] dbcError2:", dbc.Error)
-			context.JSON(http.StatusOK, novelContentLocal)
+			chapterElement := novelChapter.Chapters[uchapterIndex]
+			context.JSON(http.StatusOK, gin.H{
+				"content": novelContentLocal,
+				"element": chapterElement,
+				"name": novelChapter.Name,
+				"originURL": novelChapter.OriginURL,
+			})
 			return
 		}
+		chapterElement := novelChapter.Chapters[uchapterIndex]
 		//chapterElement := novelChapter.Chapters[uchapterIndex]
 		novelContent, err := searchContent(&novelChapter, uchapterIndex)
 		if err != nil {
@@ -151,7 +162,12 @@ func SearchContent() gin.HandlerFunc {
 			context.JSON(http.StatusServiceUnavailable, nil)
 			return
 		}
-		context.JSON(http.StatusOK, novelContent)
+		context.JSON(http.StatusOK, gin.H{
+			"content": novelContent,
+			"element": chapterElement,
+			"name": novelChapter.Name,
+			"originURL": novelChapter.OriginURL,
+		})
 	}
 }
 
