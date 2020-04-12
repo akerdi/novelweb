@@ -5,6 +5,11 @@ import Search from '@/pages/search'
 import Chapter from '@/pages/chapter'
 import Content from '@/pages/content'
 
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
 Vue.use(Router)
 
 const routes = [
