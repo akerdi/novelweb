@@ -2,7 +2,7 @@
   .search-bg
     .containerView
       .flex-row-center.f-m-t-10
-        el-input(v-model="searchText" @keyup.enter.native='handleSearch' placeholder="小说...")
+        el-input(v-model="searchText" @keyup.enter.native='handleSearch' placeholder="小说..." :clearable="true")
         el-button.f-m-l-10(@click="handleSearch" type="primary") 搜索
 
       el-table.f-m-t-30(:data="novellist" style="width: 100%" v-loading="loading")
@@ -46,7 +46,6 @@ export default {
       // 首页时，进行本地数据库匹配
       if (this.currentPage === 1) {
         [err, data] = await callAsync(searchRecommand(params))
-        console.log("~~~~~", data.data)
         this.novellist = data.data.map(v => {
           v.local = true
           v.href = `/chapter?q=${v.md5}`
@@ -58,6 +57,9 @@ export default {
       }
 
       [err, data] = await callAsync(search(params))
+      if (err) return this.$message.error(err.message)
+      if (!data || !data.data) return console.log("没有找到更多搜索数据")
+
       this.loading = false
       if (data.data && data.data.length) {
         const array = data.data.map(v => {
@@ -72,11 +74,9 @@ export default {
       const query = {
         q: row.md5
       }
-      console.log("%%%%%", row)
       this.$router.push({name: "Chapter", query})
     },
     handleCurrentChange(value) {
-      console.log(value, "   dddd ", this.currentPage)
       this.search()
     }
   },

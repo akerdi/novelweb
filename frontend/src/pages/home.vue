@@ -1,7 +1,6 @@
 <template lang="pug">
   .home-bg
     #inputContainer
-      //- img(src="")
       .flex-colume-center.flexContainer
         .flex-row-center.f-m-t-10
           el-input(v-model="search" @keyup.enter.native='handleSearch' placeholder="小说...")
@@ -52,7 +51,6 @@ export default {
       border-radius: 25px;
       width: 40%;
       min-width: 350px;
-      background-color: blueviolet;
       margin: 0 auto;
       margin-top: 20vh;
       .flexContainer {

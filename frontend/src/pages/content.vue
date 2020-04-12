@@ -1,5 +1,5 @@
 <template lang="pug">
-  .content-bd
+  .content-bd(v-if="this.data")
     .novelTitle {{this.data.name || "无题"}}
     .elementTitle.f-m-t-10 {{this.data.element.name}}
     .flex-row-center.f-m-t-10
@@ -24,7 +24,7 @@ export default {
     return {
       md5: '',
       index: '',
-      data: {},
+      data: null,
       loading: false
     }
   },
@@ -38,8 +38,7 @@ export default {
       const res = await content(params)
       this.loading = false
       this.data = res.data
-      console.log("$$$$$$$$$", res.data)
-      scrollTo(0,0);
+      scrollTo(0, 0);
     },
     handleKey(e) {
       switch (e.keyCode) {

@@ -1,18 +1,19 @@
 <template lang="pug">
   .chapter-bd
     .novelTitle {{this.chapter.name || "无题"}}
-    .chapterContainer
+    .chapterContainer(v-if="chapterTitleList.length")
       el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
       .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
         .flex-row-center.f-m-t-20(v-for="index in 4")
           a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
-    .link_tips(v-if="this.chapter.OriginURL")
+    .link_tips.f-m-b-20(v-if="this.chapter.OriginURL")
       span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
       a(:href="this.chapter.OriginURL" target="__blank") 原网址
 </template>
 
 <script>
 import _ from 'lodash'
+import callAsync from '@/lib/awaitCall'
 import { chapter } from '@/service'
 export default {
   name: "chapter",
@@ -30,15 +31,15 @@ export default {
       const params = {
         md5: this.md5
       }
-      const res = await chapter(params)
+      const [err, res] = await callAsync(chapter(params))
+      if (err) return this.$message.error(err.message)
+
       if (res.data) this.chapter = res.data.chapter
       if (!this.chapter) {
         return this.$message.error("没有找到数据")
       }
-      console.log("$$$$%^%^^^^", this.chapter)
       const chapterList = this.chapter.Chapters
       const totalineNum = Math.ceil(chapterList.length/4)
-      console.log("totalineNum: ", totalineNum)
       const novelList = []
       for (let i=0; i < totalineNum; i++) {
         const rowList = []
@@ -82,20 +83,24 @@ export default {
       font-weight: bold;
       color: #555555;
       margin: 0 auto;
-      margin-top: 40px;
+      margin-top: 20px;
+      word-break:normal;
     }
     .chapterContainer {
-      padding: 20px;
+      padding: 10px;
+      margin-top: 10px;
       .novelContent {
         margin: 0 auto;
         margin-top: 0px;
-        width: 70%;
+        width: 99%;
         background-color: antiquewhite;
         justify-content: flex-start;
         .chapterTitle {
           justify-content: space-between;
-          padding: 8px;
+          // padding: 4px;
           text-align: start;
+          margin-left: 4px;
+          margin-right: 4px;
         }
       }
     }
