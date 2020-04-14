@@ -115,9 +115,20 @@
       "link_prefix": "0",
       "chapter_selector": ".mulu a",
       "content_selector": ".yd_text2"
+    },
+    "www.tianyabook.com": {
+      "link_prefix": "0",
+      "chapter_selector": ".panel-default .panel-chapterlist a",
+      "content_selector": "#htmlContent"
+    },
+    "www.purepen.com": {
+      "link_prefix": "-1",
+      "chapter_selector": "table a",
+      "content_selector": "TABLE pre"
     }
   },
   "ignores": {
+    "www.kanunu8.com": 1,
     "dpcq1.net": 1,
     "www.bxwx666.org": 1,
     "www.myitit.com": 1,
