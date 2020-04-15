@@ -17,6 +17,7 @@ type RedisConfig struct {
 	Host string
 	Port int
 	Pass string
+	DB int
 }
 
 type Config struct {
@@ -49,6 +50,7 @@ func InitConfig() Config {
 		Host: "127.0.0.1",
 		Port: 6379,
 		Pass: "",
+		DB: 0,
 	}
 	switch key {
 	case	"production":
@@ -114,6 +116,11 @@ func InitConfig() Config {
 	}
 	if key = os.Getenv("REDIS_PWD"); key != "" {
 		currentConfig.Redis.Pass = key
+	}
+	if key = os.Getenv("REDIS_DB"); key != "" {
+		if i, err := strconv.Atoi(key); err == nil {
+			currentConfig.Redis.DB = i
+		}
 	}
 	return currentConfig
 }

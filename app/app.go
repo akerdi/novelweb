@@ -28,7 +28,7 @@ func initConfig() {
 }
 
 func initMiddleware(g *gin.Engine) {
-	g.StaticFile("/favicon.ico", "./resource/favicon.ico")
+	g.StaticFile("/favicon.ico", "./public/static/img/favicon.ico")
 	g.Static("/assets", "public/assets")
 	g.Use(middlewares.Logger())
 	g.Use(gzip.Gzip(gzip.DefaultCompression))

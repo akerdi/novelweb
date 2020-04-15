@@ -10,6 +10,7 @@ require (
 	github.com/gin-contrib/gzip v0.0.1
 	github.com/gin-gonic/contrib v0.0.0-20191209060500-d6e26eeaa607
 	github.com/gin-gonic/gin v1.5.0
+	github.com/go-redis/redis v6.15.7+incompatible // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
