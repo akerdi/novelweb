@@ -8,7 +8,7 @@ import (
 
 func Ternary(expr bool, whenTrue, whenFalse interface{}) interface{} {
 	if expr == true {
-		return  whenTrue
+		return whenTrue
 	}
 	return whenFalse
 }
@@ -28,5 +28,5 @@ func UrlJoin(href, base string) string {
 	if err != nil {
 		return ""
 	}
-	return  baseURL.ResolveReference(uri).String()
+	return baseURL.ResolveReference(uri).String()
 }

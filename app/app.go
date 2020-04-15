@@ -8,15 +8,15 @@ import (
 	"novelweb/routes"
 
 	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-gonic/gin"
 )
 
 func Init() *gin.Engine {
 	initConfig()
 	// 先打开数据库
 	db.OpenDB()
-	
+
 	g := gin.New()
 	initMiddleware(g)
 	return g
@@ -24,6 +24,7 @@ func Init() *gin.Engine {
 
 func initConfig() {
 	config := config.InitConfig()
+	db.InitRedisClient()
 	fmt.Println("initConfig", config)
 }
 
@@ -32,7 +33,7 @@ func initMiddleware(g *gin.Engine) {
 	g.Static("/assets", "public/assets")
 	g.Use(middlewares.Logger())
 	g.Use(gzip.Gzip(gzip.DefaultCompression))
-	
+
 	routes.InitRoute(g)
 	g.Use(static.Serve("/", static.LocalFile("./public", true)))
 }

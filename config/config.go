@@ -1,14 +1,15 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 )
 
 type DBConfig struct {
-	Name string
-	Host string
-	Port int
+	Name     string
+	Host     string
+	Port     int
 	Username string
 	Password string
 }
@@ -17,21 +18,21 @@ type RedisConfig struct {
 	Host string
 	Port int
 	Pass string
-	DB int
+	DB   int
 }
 
 type Config struct {
 	Debug bool
-	Port int
-	Host string
-	DB DBConfig
+	Port  int
+	Host  string
+	DB    DBConfig
 	Redis RedisConfig
 }
 
 var currentConfig Config
 
 func GetConfig() Config {
-	return	currentConfig
+	return currentConfig
 }
 
 func InitConfig() Config {
@@ -39,6 +40,7 @@ func InitConfig() Config {
 	if key == "" {
 		key = "production"
 	}
+	fmt.Println("server start with env: ", key)
 	mongo := DBConfig{
 		Name:     "novelweb",
 		Host:     "127.0.0.1",
@@ -50,16 +52,16 @@ func InitConfig() Config {
 		Host: "127.0.0.1",
 		Port: 6379,
 		Pass: "",
-		DB: 0,
+		DB:   6,
 	}
 	switch key {
-	case	"production":
+	case "production":
 		currentConfig = Config{
 			Debug: false,
 			Port:  8900,
-			Host:  "",
-			DB:    DBConfig{},
-			Redis: RedisConfig{},
+			Host:  "127.0.0.1",
+			DB:    mongo,
+			Redis: redis,
 		}
 		break
 	case "dev":

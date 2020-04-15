@@ -71,42 +71,37 @@ func SearchChapter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		md5 := c.Param("md5")
 
-		dbFD := db.GetDB()
-		var novelChapter schema.NovelChapter
-		dbc := dbFD.Where("md5 = ?", md5).First(&novelChapter)
-		if dbc.Error == nil {
-			fmt.Println("[novel.SearchChapter] get novelChapter err: ", dbc.Error)
+		novelChapter, err := db.RedisConnector.ChapterWithNovelmd5(md5)
+		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
+				"success": true,
 				"chapter": novelChapter,
 			})
 			return
 		}
-
+		// 先找出小说novelNet
+		dbFD := db.GetDB()
 		var novelNet schema.NovelNet
-		dbc = dbFD.Where("md5 = ?", md5).First(&novelNet)
+		dbc := dbFD.Where("md5 = ?", md5).First(&novelNet)
 		if dbc.Error != nil {
 			fmt.Println("[novel.SearchChapter] get novelNet err:", dbc.Error)
 			c.JSON(http.StatusServiceUnavailable, dbc.Error)
 			return
 		}
-		//if (schema.NovelNet{}) == novelNet {
-		//	c.JSON(http.StatusNoContent, "失败")
-		//	return
-		//}
-		novelChapterRes, err := searchChapter(&novelNet)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, "")
-			return
-		}
-		dbc = dbFD.Create(novelChapterRes)
-		if dbc.Error != nil {
-			c.JSON(http.StatusServiceUnavailable, "")
-			return
-		}
+		novelChapter, err = searchChapterAndSave(&novelNet)
 		c.JSON(http.StatusOK, gin.H{
-			"chapter": novelChapterRes,
+			"chapter": novelChapter,
 		})
 	}
+}
+
+func searchChapterAndSave(novelNet *schema.NovelNet) (novelChapter *schema.NovelChapter, err error)  {
+	novelChapter, err = searchChapter(novelNet)
+	if err != nil {
+		return
+	}
+	err = db.RedisConnector.SaveChapterByNovelmd5(novelNet.MD5, novelChapter)
+	return
 }
 
 func SearchContent() gin.HandlerFunc {
@@ -124,31 +119,46 @@ func SearchContent() gin.HandlerFunc {
 		uchapterIndex := uint64(chapterIndex)
 		md5 := context.Param("md5")
 		log.Println("[novel.SearchContent] index: md5: ", chapterIndex, md5)
-		var novelChapter schema.NovelChapter
+		//var novelChapter schema.NovelChapter
+		
+		novelChapter, err := db.RedisConnector.ChapterWithNovelmd5(md5)
 		dbFD := db.GetDB()
-		dbc := dbFD.Where("md5 = ?", md5).First(&novelChapter)
-		if dbc.Error != nil {
-			log.Println("[novel.SearchContent] dbcError:", dbc.Error)
-			context.JSON(http.StatusServiceUnavailable, "")
-			return
+		if err != nil {
+			log.Println("[novel.SearchContent] dbcError:", err.Error())
+			//context.JSON(http.StatusServiceUnavailable, "")
+			// 没有找到chapter ？ 过期了，重新去获取最新章节列表
+			var novelNet schema.NovelNet
+			dbc := dbFD.Where("md5 = ?", md5).First(&novelNet)
+			if dbc.Error != nil {
+				fmt.Println("[novel.SearchChapter] get novelNet err:", dbc.Error)
+				context.JSON(http.StatusServiceUnavailable, dbc.Error)
+				return
+			}
+			novelChapter, err = searchChapterAndSave(&novelNet)
+			if err != nil {
+				context.JSON(http.StatusServiceUnavailable, err.Error())
+				return
+			}
 		}
+		
 		//这里开始寻找有没有对应章节
 		var novelContentLocal schema.NovelContent
-		dbc = dbFD.Where("md5_index = ?", md5+":"+chapterIndexStr).First(&novelContentLocal)
+		
+		dbc := dbFD.Where("md5_index = ?", md5+":"+chapterIndexStr).First(&novelContentLocal)
 		if dbc.Error == nil {
 			log.Println("[novel.SearchContent] dbcError2:", dbc.Error)
 			chapterElement := novelChapter.Chapters[uchapterIndex]
 			context.JSON(http.StatusOK, gin.H{
-				"content": novelContentLocal,
-				"element": chapterElement,
-				"name": novelChapter.Name,
+				"content":   novelContentLocal,
+				"element":   chapterElement,
+				"name":      novelChapter.Name,
 				"originURL": novelChapter.OriginURL,
 			})
 			return
 		}
 		chapterElement := novelChapter.Chapters[uchapterIndex]
 		//chapterElement := novelChapter.Chapters[uchapterIndex]
-		novelContent, err := searchContent(&novelChapter, uchapterIndex)
+		novelContent, err := searchContent(novelChapter, uchapterIndex)
 		if err != nil {
 			context.JSON(http.StatusServiceUnavailable, "")
 			return
@@ -164,9 +174,9 @@ func SearchContent() gin.HandlerFunc {
 			return
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"content": novelContent,
-			"element": chapterElement,
-			"name": novelChapter.Name,
+			"content":   novelContent,
+			"element":   chapterElement,
+			"name":      novelChapter.Name,
 			"originURL": novelChapter.OriginURL,
 		})
 	}

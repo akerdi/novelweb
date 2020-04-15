@@ -20,9 +20,9 @@ Config.Rule
 */
 
 type ruleConfig struct {
-	Engines []string
-	Rules map[string]map[string]interface{} `json:"rules"`
-	IgnoreDomain map[string]int	 `json:"ignores"`
+	Engines      []string
+	Rules        map[string]map[string]interface{} `json:"rules"`
+	IgnoreDomain map[string]int                    `json:"ignores"`
 }
 
 var RuleConfig *ruleConfig
