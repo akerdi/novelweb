@@ -1,14 +1,19 @@
 <template lang="pug">
   .chapter-bd
-    .novelTitle {{this.chapter.name || "无题"}}
-    .chapterContainer(v-if="chapterTitleList.length")
-      el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
-      .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
-        .flex-row-center.f-m-t-20(v-for="index in 4")
-          a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
-    .link_tips.f-m-b-20(v-if="this.chapter.OriginURL")
-      span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
-      a(:href="this.chapter.OriginURL" target="__blank") 原网址
+    .f-p-10
+      el-breadcrumb.f-m-t-20.f-m-b-20(separator-class="el-icon-arrow-right")
+        el-breadcrumb-item(:to="{ path: '/' }") 首页
+        el-breadcrumb-item(:to="{ path: '/search', query: {'q': novel} }") 搜索
+        el-breadcrumb-item 章节列表
+      .novelTitle {{this.chapter.name || "无题"}}
+      .chapterContainer(v-if="chapterTitleList.length")
+        el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
+        .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
+          .flex-row-center.f-m-t-20(v-for="index in 4")
+            a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
+      .link_tips.f-m-b-20(v-if="this.chapter.OriginURL")
+        span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
+        a(:href="this.chapter.OriginURL" target="__blank") 原网址
 </template>
 
 <script>
@@ -23,7 +28,8 @@ export default {
       chapterList: [],
       title: '',
       chapterTitleList: [],
-      chapter: {}
+      chapter: {},
+      novel: '' // 使用novel搜索词 进来的
     }
   },
   methods: {
@@ -63,6 +69,7 @@ export default {
   mounted() {
     if (this.$route.query) {
       this.md5 = this.$route.query.q
+      this.novel = this.$route.query.n
       this.searchChapter()
     }
   }
@@ -87,8 +94,7 @@ export default {
       word-break:normal;
     }
     .chapterContainer {
-      padding: 10px;
-      margin-top: 10px;
+      margin-top: 20px;
       .novelContent {
         margin: 0 auto;
         margin-top: 0px;
