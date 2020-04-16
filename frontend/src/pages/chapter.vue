@@ -41,8 +41,6 @@ export default {
       if (err) return this.$message.error(err.message)
 
       if (res.data) this.chapter = res.data.chapter
-      console.log("$$$$$$$$4", res.data);
-
       if (!this.chapter || !this.chapter.Chapters) {
         return this.$message.error("没有找到数据")
       }
