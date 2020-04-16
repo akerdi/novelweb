@@ -7,7 +7,8 @@
           el-button.f-m-l-20(@click="handleSearch" type="primary") 搜索
     .recommand
       a.recommandTitle(v-for="(novel, i) in recommandNovels" @click="recommand(i)") {{novel}}
-
+    .link_tips
+      span v2020.4.16
 </template>
 
 <script>
