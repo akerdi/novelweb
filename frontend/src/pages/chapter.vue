@@ -9,7 +9,7 @@
       .chapterContainer(v-if="chapterTitleList.length")
         el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
         .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
-          .flex-row-center.f-m-t-20(v-for="index in 4")
+          .chapterRow(v-for="index in 4")
             a.chapterTitle(:href="list[index-1].href") {{ list[index-1].name }}
       .link_tips.f-m-t-20.f-m-b-20(v-if="this.chapter.OriginURL")
         span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
@@ -41,7 +41,9 @@ export default {
       if (err) return this.$message.error(err.message)
 
       if (res.data) this.chapter = res.data.chapter
-      if (!this.chapter) {
+      console.log("$$$$$$$$4", res.data);
+
+      if (!this.chapter || !this.chapter.Chapters) {
         return this.$message.error("没有找到数据")
       }
       const chapterList = this.chapter.Chapters
@@ -103,6 +105,10 @@ export default {
         width: 99%;
         background-color: antiquewhite;
         justify-content: space-around;
+        .chapterRow {
+          margin-top: 20px;
+          width: 25%;
+        }
         .chapterTitle {
           padding: 4px;
           text-align: center;

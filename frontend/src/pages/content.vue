@@ -3,7 +3,7 @@
     el-breadcrumb.f-m-l-20.f-m-t-20.f-m-b-20(separator-class="el-icon-arrow-right")
       el-breadcrumb-item(:to="{ path: '/' }") 首页
       el-breadcrumb-item(:to="{ path: '/search', query: {'q': novel} }") 搜索
-      el-breadcrumb-item(:to="{ path: 'chapter', query: {'q': md5}}") 章节列表
+      el-breadcrumb-item(:to="{ path: 'chapter', query: {'q': md5, 'n': novel}}") 章节列表
       el-breadcrumb-item 正文
     .novelTitle {{this.data ? this.data.name : "无题"}}
     .elementTitle.f-m-t-10(v-if="this.data") {{this.data.element.name}}
