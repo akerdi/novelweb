@@ -66,7 +66,6 @@ func SearchNovel() gin.HandlerFunc {
 }
 
 // SearchChapter 搜索章节
-// TODO 考虑到有些小说是一周更一次，这里使用redis 进行章节一天的储存。
 func SearchChapter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		md5 := c.Param("md5")

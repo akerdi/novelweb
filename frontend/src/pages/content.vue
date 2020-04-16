@@ -2,15 +2,15 @@
   .content-bd
     el-breadcrumb.f-m-l-20.f-m-t-20.f-m-b-20(separator-class="el-icon-arrow-right")
       el-breadcrumb-item(:to="{ path: '/' }") 首页
-      el-breadcrumb-item 搜索
+      el-breadcrumb-item(:to="{ path: '/search', query: {'q': novel} }") 搜索
       el-breadcrumb-item(:to="{ path: 'chapter', query: {'q': md5}}") 章节列表
       el-breadcrumb-item 正文
     .novelTitle {{this.data ? this.data.name : "无题"}}
-    .elementTitle.f-m-t-10 {{this.data.element.name}}
+    .elementTitle.f-m-t-10(v-if="this.data") {{this.data.element.name}}
     .flex-row-center.f-m-t-10
       el-button.f-m-r-30(type="text" @click="handleLast") 上一章
       el-button(type="text" size="medium" @click="handleNext") 下一章
-    .f-m-t-20.f-m-b-20
+    .f-m-t-20.f-m-b-20(v-if="this.data")
       .contentHtml(v-html='this.data.content.content')
     .flex-row-center.f-m-t-10
       el-button.f-m-r-30(type="text" @click="handleLast") 上一章
@@ -30,7 +30,8 @@ export default {
       md5: '',
       index: '',
       data: null,
-      loading: false
+      loading: false,
+      novel: ''
     }
   },
   methods: {
@@ -77,9 +78,10 @@ export default {
     },
     init() {
       if (this.$route.query) {
-        const {q, i} = this.$route.query
+        const {q, i, n} = this.$route.query
         this.md5 = q
         this.index = i
+        this.novel = n
         this.getContent()
       }
     }

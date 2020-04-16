@@ -42,7 +42,7 @@ func (connector *RedisClient) SaveChapterByNovelmd5(novelId string, chapter *sch
 	if err != nil {
 		return
 	}
-	err = connector.client.Set(novelId, chapterJson, 24*2.5*time.Hour).Err()
+	err = connector.client.Set(novelId, chapterJson, 24*3.5*time.Hour).Err()
 	if err != nil {
 		return
 	}

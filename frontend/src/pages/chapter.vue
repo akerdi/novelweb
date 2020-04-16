@@ -10,8 +10,8 @@
         el-backtop(target=".chapterContainer" :visibility-height='150' :right="50" :bottom="50")
         .flex-row-center.novelContent(v-for="(list, i) in chapterTitleList")
           .flex-row-center.f-m-t-20(v-for="index in 4")
-            a.f-m-r-10.chapterTitle(@click="chooseContent(list[index-1], i*4+index-1)") {{ list[index-1] }}
-      .link_tips.f-m-b-20(v-if="this.chapter.OriginURL")
+            a.chapterTitle(:href="list[index-1].href") {{ list[index-1].name }}
+      .link_tips.f-m-t-20.f-m-b-20(v-if="this.chapter.OriginURL")
         span 该文章由网络获取, 如有侵权请联系QQ:767838865@qq.com 立即撤下.&nbsp
         a(:href="this.chapter.OriginURL" target="__blank") 原网址
 </template>
@@ -52,7 +52,8 @@ export default {
         for (let j=0; j < 4; j++) {
           const index = i*4+j
           const res = _.assign({}, chapterList[index])
-          rowList.push(res.name)
+          res.href = `/content?q=${this.md5}&i=${index}&n=${this.novel}`
+          rowList.push(res)
         }
         novelList.push(rowList)
       }
@@ -61,7 +62,8 @@ export default {
     chooseContent(row, index) {
       const query = {
         q: this.md5,
-        i: index
+        i: index,
+        n: this.novel
       }
       this.$router.push({name: "Content", query})
     }
@@ -100,13 +102,10 @@ export default {
         margin-top: 0px;
         width: 99%;
         background-color: antiquewhite;
-        justify-content: flex-start;
+        justify-content: space-around;
         .chapterTitle {
-          justify-content: space-between;
-          // padding: 4px;
-          text-align: start;
-          margin-left: 4px;
-          margin-right: 4px;
+          padding: 4px;
+          text-align: center;
         }
       }
     }
