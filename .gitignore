@@ -4,3 +4,4 @@ dist
 public
 packages
 staticBuilds
+docker-compose.yml
