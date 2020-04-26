@@ -49,30 +49,22 @@ export default {
     handleKey(e) {
       switch (e.keyCode) {
         case 39:
-          this.handleNext()
+          this.handleRoute()
           break
         case 37:
-        this.handleLast()
-        break
+          this.handleRoute(false)
+          break
       }
     },
-    handleNext() {
+    handleRoute(next=true) {
       let index = this.index
-      index++
+      if (next) index++
+      else index--
       this.index = index
       const query = {
         q: this.md5,
-        i: this.index
-      }
-      this.$router.replace({query})
-    },
-    handleLast() {
-      let index = this.index
-      index--
-      this.index = index
-      const query = {
-        q: this.md5,
-        i: this.index
+        i: this.index,
+        n: this.novel
       }
       this.$router.replace({query})
     },
